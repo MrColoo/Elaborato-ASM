@@ -1,7 +1,9 @@
 .section .data
-
-.section time:
-.section totalPenalty:
+ time: .int 0
+ totalPenalty: .int 0
+ num: .int 0
+ processi: .int 0
+ .section .text 
 
 .global algoritmo_edf    # rende visibile il simbolo findNum al linker
 
@@ -10,7 +12,8 @@
                         # il numero da convertire deve esse
 
 
-algoritmo_edf:  
+algoritmo_edf: 
+movl %eax, num
  
 pushl %ebp                           # salvo il frame pointer  
 movl %esp, %ebp                     # Imposto il nuovo frame pointer (salvato in esp) 

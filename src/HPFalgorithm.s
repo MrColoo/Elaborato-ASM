@@ -1,7 +1,10 @@
 .section .data
 
-.section time:
-.section totalPenalty:
+time: .int 0
+totalPenalty: .int 0
+num: .int 0
+processi: .int 0
+  .section .text
 
 .global hpfAlgorithm    # rende visibile il simbolo findNum al linker
 
@@ -10,6 +13,7 @@
                         # il numero da convertire deve esse
 
 hpfAlgorithm:
+movl %eax, num
     pushl %ebp
     movl %esp, %ebp
     subl $16, %esp  # Alloca spazio per variabili locali
