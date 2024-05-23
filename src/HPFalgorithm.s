@@ -1,3 +1,8 @@
+.section .data
+
+.section time:
+.section totalPenalty:
+
 .global hpfAlgorithm    # rende visibile il simbolo findNum al linker
 
 .type hpfAlgorithm, @function   # dichiarazione della funzione itoa

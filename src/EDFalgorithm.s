@@ -1,3 +1,15 @@
+.section .data
+
+.section time:
+.section totalPenalty:
+
+.global algoritmo_edf    # rende visibile il simbolo findNum al linker
+
+.type algoritmo_edf, @function   # dichiarazione della funzione itoa
+                        # la funzione converte un intero in una stringa
+                        # il numero da convertire deve esse
+
+
 algoritmo_edf:  
  
 pushl %ebp                           # salvo il frame pointer  
