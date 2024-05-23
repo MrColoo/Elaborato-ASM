@@ -19,9 +19,6 @@ format_error:
     .asciz "Alcuni valori indicati nel file non sono corretti\n"
 
 
-
-
-
 element_size: .word 4       # Ogni prodotto ha 4 byte (1 per ciascun campo)
 input_choice: .byte 0       # Scelta dell'algoritmo di pianificazione
 
