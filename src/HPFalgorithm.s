@@ -1,5 +1,11 @@
+.global hpfAlgorithm    # rende visibile il simbolo findNum al linker
+
+.type hpfAlgorithm, @function   # dichiarazione della funzione itoa
+                        # la funzione converte un intero in una stringa
+                        # il numero da convertire deve esse
+
 hpfAlgorithm:
-    push %ebp
+    pushl %ebp
     movl %esp, %ebp
     subl $16, %esp  # Alloca spazio per variabili locali
 
@@ -61,38 +67,41 @@ scambio_processi:
     jmp incrementa_j            # Salta a incrementa_j
 
 fine_ciclo_interno:
-    pop %ecx                   # Ripristina ecx (i) dallo stack
+    popl %ecx                   # Ripristina ecx (i) dallo stack
     decl %ecx                   # i++
     jmp sort_loop_esterno       # Ripeti il ciclo esterno
 
 fine_sort:
     movl $0, time               # Inizializza time a 0
     movl $0, totalPenalty       # Inizializza totalPenalty a 0
-    movl $0, %edi               # i a 0  (i=0)
+    movl $0, %edi               #
 
-calcolo_penalita:
-    cmp 12(%ebp), %edi         # Confronto i con num
-    jge fine_penalita           # Salto a fine penalita
+    calcolo_penalita:
+    cmpl num,%edi                   # confronto i con num
+    jge fine_penalita               # salto a fine penalita 
 
-    sal $4, %edi                # Moltiplico 16 per i (dimensione struct)
-    movl (%esi, %edi, 1), %eax  # Carico processi[i] in eax
-    sar $4, %edi               # Ripristino l'indice edi
+    sal $4, %edi                    # moltiplico 16 per i (dimensione struct)
+    movl processi(,%edi,1), %eax    # carico processi[i] in eax 
+    sarl $4, %edi                   # ripristino l'indice edi 
 
-    movl 4(%eax), %ebx          # Carico processi[i].identificativo in ebx
-    add 8(%eax), time          # time += processi[i].durata
+    movl 4(%eax), %ebx              # carico i processi processi[i].identidicativo in ebx 
+    addl %ebx, time                 # time + processi[i]
 
-    # Qui calcolo la penalita se il tempo supera la durata
-    movl time, %ebx             # Carico time in ebx
-    cmp 8(%eax), %ebx          # Confronto time con processi[i].scadenza
-    jle no_penalita             # Salto a no_penalita
+    # qui calcolo la penalita se il tempo supera la durata 
 
-    subl 8(%eax), %ebx          # Calcola il ritardo (time - processi[i].scadenza)
-    imul 12(%eax), %ebx        # Moltiplica il ritardo per processi[i].priorita
-    add %ebx, totalPenalty     # Aggiungo la penalità totale
+    movl time, %ebx                 # carico time in ebx 
+    cmpl 8(%eax), %ebx              # confronto time con processi[i].scadenza 
+    jle no_penalita                 # salto a no_penalita
+
+    subl 8(%eax), %ebx              # Calcola il ritardo (time - processi[i].scadenza)
+    imull 12(%eax), %ebx            # Moltiplica il ritardo per processi[i].priorita
+    addl %ebx, totalPenalty         # Aggiungo la penalità totale
+
 
 no_penalita:
-    inc %edi                   # Incremento i
-    jmp calcolo_penalita        # Salto a calcolo_penalita
+    incl %edi                       # incremento i
+    jmp calcolo_penalita            # salto a calcolo_penalita
 
 fine_penalita:
-    ret
+
+    call printf
