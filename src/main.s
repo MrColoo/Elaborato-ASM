@@ -122,8 +122,4 @@ _start:
 
     # Fine programma
     jmp _exit
-
-
-
-
-
+    
