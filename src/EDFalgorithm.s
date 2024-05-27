@@ -8,7 +8,7 @@
 .global algoritmo_edf   
 
 .type algoritmo_edf, @function   # dichiarazione della funzione itoa
-                        # la funzione converte un intero in una stringa
+                        
                        
 
 

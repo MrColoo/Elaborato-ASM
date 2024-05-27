@@ -6,13 +6,13 @@ num: .int 0
 processi: .int 0
   .section .text
 
-.global hpfAlgorithm   
+.global algoritmo_hpf    
 
-.type hpfAlgorithm, @function   # dichiarazione della funzione itoa
-                        # la funzione converte un intero in una stringa
+.type algoritmo_hpf , @function   # dichiarazione della funzione itoa
+                        
                        
 
-hpfAlgorithm:
+algoritmo_hpf:
 movl %eax, num
     pushl %ebp
     movl %esp, %ebp
@@ -113,4 +113,4 @@ no_penalita:
 
 fine_penalita:
 
-    call printf
+    ret
