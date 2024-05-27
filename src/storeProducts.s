@@ -3,46 +3,42 @@
 # ###################
 
 .section .data
-    num_products: .int 0       # Numero di prodotti letti dal file
+    num_products: .int 0        # Numero di prodotti letti dal file
+    num_products_saved: .int 0        # Numero di prodotti salvati in array
 
     filename:    
-        .asciz "Ordini.txt" # Nome del file di testo da leggere
+        .asciz "Ordini.txt"     # Nome del file di testo da leggere
     fd:
-        .int 0               # File descriptor
-    
-    id: .int 0
-    durata: .int 0
-    scadenza: .int 0
-    priorita: .int 0
+        .int 0                  # File descriptor
 
     buffer: .space 256          # Buffer per la lettura del file
-    buffer_width: .int 256      # Dimensione del buffer
-    newline: .byte 10        # Valore del simbolo di nuova linea
-    bytes_read: .int 0            # Numero di byte letti
+    buffer_size: .int 256      # Dimensione del buffer
     buffer_index: .int 0        # Indice per scorrere il buffer
-
-    comma:
-    .byte 44             # Valore del simbolo di virgola
+    newline: .byte 10           # Valore del simbolo di nuova linea
+    comma: .byte 44             # Valore del simbolo di virgola
+    bytes_read: .int 0          # Numero di byte letti dal file
 
     malloc_size:
-    .int 40              # 10 prodotti x 4 byte ciascuno (32 bit per prodotto)
+    .int 0                     # 10 prodotti x 4 byte ciascuno (32 bit per prodotto)
 
     read_error:
-        .asciz "Errore nella apertura del file\n"
+        .asciz "Errore nella apertura del file\n" # Stringa di errore per apertura file
+
+    products_pointer:
+        .int 0
 
 .section .text
 
-.global storeProducts    # rende visibile il simbolo findNum al linker
+.global storeProducts    # rende visibile il simbolo storeProducts al linker
 
-.type storeProducts, @function   # dichiarazione della funzione itoa
-                        # la funzione converte un intero in una stringa
-                        # il numero da convertire deve esse
+.type storeProducts, @function   # dichiarazione della funzione storeProducts
+                        # la funzione legge un file e crea un array di prodotti
 
 
 _move_ahead:
     # Controlla se abbiamo raggiunto la fine dei dati letti nel buffer
-    mov bytes_read, %ecx
-    cmp %ecx, %edi
+    mov bytes_read, %eax
+    cmp %eax, %edi
     jge _read_file   # Se sì, torna a leggere dal file
 
     # Carica il byte corrente del buffer in AL
@@ -54,14 +50,27 @@ _move_ahead:
     ret
 
 storeProducts:
-    # Passo 3: Allocazione della memoria per i prodotti
-    mov %eax, num_products
+    mov %eax, num_products        # Legge parametro funzione caricato prima in eax e lo salva nella variabile num_products
     imul $4, %eax                 # 4 byte per prodotto
-    mov %eax, malloc_size
-    mov malloc_size, %ebx
-    mov $45, %eax                 # syscall brk
-    int $0x80
-    mov %eax, products_pointer    # Salva il puntatore alla memoria allocata
+    mov %eax, malloc_size         # calcola spazio necessario nello heap nella variabile malloc_size
+
+     # Ottiene l'attuale fine dell'heap (program break)
+    movl $45, %eax        # Syscall number for brk
+    movl $0, %ebx         # Argomento: 0 per ottenere l'attuale break
+    int $0x80             # Effettua la syscall
+    movl %eax, products_pointer       # Salva l'attuale break in %edi
+
+    # Allocazione della memoria per i prodotti
+    mov products_pointer, %ebx
+    addl malloc_size, %ebx      # Aumenta il break dei byte necessari a contenere tutti i prodotti
+    movl $45, %eax        # Syscall number for brk
+    int $0x80             # Effettua la syscall
+
+    # Verifica se la syscall ha avuto successo
+    cmpl %ebx, %eax       # Confronta il valore di ritorno con il valore richiesto
+    jne _ret             # Se non è uguale, salta a error
+
+    mov products_pointer, %edi
 
 # Apre il file
 _file_open:
@@ -81,7 +90,7 @@ _read_file:
     mov $3, %eax        # syscall read
     mov fd, %ebx        # File descriptor
     mov $buffer, %ecx   # Buffer di input
-    mov buffer_width, %edx      # Lunghezza massima
+    mov buffer_size, %edx      # Lunghezza massima
     int $0x80           # Interruzione del kernel
 
     # Salva il numero di byte letti
@@ -91,35 +100,49 @@ _read_file:
     jle _file_close     # Se ci sono errori o EOF, chiudo il file
 
     # Resetta l'indice del buffer
-    xor %edi, %edi
+    xor %esi, %esi 
 
-_find_ID:
-    call _move_ahead
-    # Ad esempio, controlla se è una nuova linea o un delimitatore
-    cmp %al, comma 
-    je _find_duration     # Gestisci la nuova linea
+    # Resetta l'accumulatore per il numero corrente
+    xor %ecx, %ecx
 
+parse_buffer:
+    # Controlla se abbiamo raggiunto la fine dei dati letti nel buffer
+    mov bytes_read, %eax
+    cmp %eax, %esi
+    jge _read_file   # Se sì, torna a leggere dal file
 
+    # Carica il byte corrente del buffer in AL
+    mov buffer(,%esi,1), %al
 
-    jmp _find_ID
+    cmp %al, newline     # Controlla se è una nuova linea
+    je next_field      # Se sì, inizia un nuovo prodotto
 
-_find_duration:
+    cmp %al, comma       # Controlla se è una virgola
+    je next_field       # Se sì, passa al prossimo campo
 
-_find_deadline:
+    sub $'0', %al        # Converte il carattere ASCII in valore numerico
+    imul $10, %ecx       # Moltiplica l'accumulatore per 10
+    add %al, %cl        # Aggiunge il valore numerico all'accumulatore
+    jmp increment_index
 
-_find_priority:
+increment_index:
+    inc %esi             # Incrementa l'indice del buffer
+    cmp buffer_size, %esi  # Controlla se siamo alla fine del buffer
+    jl parse_buffer   # Continua a processare se non siamo alla fine
 
+    call _file_close     # Chiudi il file
+    jmp _ret            # Esce dal programma
 
-_newline_found:
-    incw num_products          # incremento il numero di prodotti
-
-    # Torna a processare il prossimo byte nel buffer
-    jmp _process_buffer
+next_field:
+    mov %ecx, (%edi)     # Salva l'accumulatore nel campo corrente
+    xor %ecx, %ecx       # Resetta l'accumulatore per il prossimo numero
+    add $1, %edi         # Passa al prossimo campo del prodotto
+    jmp increment_index
 
 # Chiude il file
 _file_close:
     mov $6, %eax        # syscall close
-    mov %ebx, %ecx      # File descriptor
+    mov fd, %ecx      # File descriptor
     int $0x80           # Interruzione del kernel
     
     mov num_products, %eax

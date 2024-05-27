@@ -38,8 +38,9 @@ _exit:
 
 _start:
     call findNumProducts           # Chiama la funzione per aprire il file
+    call storeProducts
 
-    call itoa
+    # call itoa
 
     # Fine programma
     jmp _exit
