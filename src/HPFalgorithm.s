@@ -1,10 +1,19 @@
-.global hpfAlgorithm    # rende visibile il simbolo findNum al linker
+.section .data
 
-.type hpfAlgorithm, @function   # dichiarazione della funzione itoa
-                        # la funzione converte un intero in una stringa
-                        # il numero da convertire deve esse
+time: .int 0
+totalPenalty: .int 0
+num: .int 0
+processi: .int 0
+  .section .text
 
-hpfAlgorithm:
+.global algoritmo_hpf    
+
+.type algoritmo_hpf , @function   # dichiarazione della funzione itoa
+                        
+                       
+
+algoritmo_hpf:
+movl %eax, num
     pushl %ebp
     movl %esp, %ebp
     subl $16, %esp  # Alloca spazio per variabili locali
@@ -104,4 +113,4 @@ no_penalita:
 
 fine_penalita:
 
-    call printf
+    ret

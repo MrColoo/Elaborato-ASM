@@ -1,4 +1,19 @@
-algoritmo_edf:  
+.section .data
+ time: .int 0
+ totalPenalty: .int 0
+ num: .int 0
+ processi: .int 0
+ .section .text 
+
+.global algoritmo_edf   
+
+.type algoritmo_edf, @function   # dichiarazione della funzione itoa
+                        
+                       
+
+
+algoritmo_edf: 
+movl %eax, num
  
 pushl %ebp                           # salvo il frame pointer  
 movl %esp, %ebp                     # Imposto il nuovo frame pointer (salvato in esp) 
