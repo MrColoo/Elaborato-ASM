@@ -6,41 +6,46 @@
 
 
 menu_prompt: 
-    .asciz "[1]: Earliest Deadline First (EDF)\n[2]: Highest Priority First (HPF)\n[3]: Esci dal programma\n> "
+    .ascii "[1]: Earliest Deadline First (EDF)\n[2]: Highest Priority First (HPF)\n[3]: Esci dal programma\n>\0"
 product_fmt: 
-    .asciz "%d:%d\n"
+    .ascii "%d:%d\n\0"
 conclusion_fmt: 
-    .asciz "Conclusione: %d\n"
+    .ascii "Conclusione: %d\n\0"
 penalty_fmt:
-    .asciz "Penalty: %d\n"
+    .ascii "Penalty: %d\n\0"
 
 
 format_error:
-    .asciz "Alcuni valori indicati nel file non sono corretti\n"
+    .ascii "Alcuni valori indicati nel file non sono corretti\n"
 
 
 element_size: .word 4       # Ogni prodotto ha 4 byte (1 per ciascun campo)
 input_choice: .byte 0       # Scelta dell'algoritmo di pianificazione
 
-.section .bss
-products_pointer: .word 0       # Puntatore all'array di prodotti
-
+products_pointer: .int 0       # Puntatore all'array di prodotti
+num_products: .int 0        # contatore numero di prodotti presenti nel file
 
 
 
 .section .text
     .global _start
-    
-_exit:
-    mov $1, %eax        # syscall exit
-    xor %ebx, %ebx      # Codice di uscita 0
-    int $0x80           # Interruzione del kernel
 
 _start:
     call findNumProducts           # Chiama la funzione per aprire il file
     call storeProducts
+    mov %eax, products_pointer
+    mov %ebx, num_products
+    call itoa
+    call printf
+    mov num_products, %eax
+    call itoa
+    call printf
 
-    # call itoa
+    leal penalty_fmt, %eax
+    call printf
 
-    # Fine programma
-    jmp _exit
+# Fine programma
+_exit:
+    mov $1, %eax        # syscall exit
+    xor %ebx, %ebx      # Codice di uscita 0
+    int $0x80           # Interruzione del kernel

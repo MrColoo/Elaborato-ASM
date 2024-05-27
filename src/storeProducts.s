@@ -34,21 +34,6 @@
 .type storeProducts, @function   # dichiarazione della funzione storeProducts
                         # la funzione legge un file e crea un array di prodotti
 
-
-_move_ahead:
-    # Controlla se abbiamo raggiunto la fine dei dati letti nel buffer
-    mov bytes_read, %eax
-    cmp %eax, %edi
-    jge _read_file   # Se sì, torna a leggere dal file
-
-    # Carica il byte corrente del buffer in AL
-    mov buffer(,%edi,1), %al
-
-    # Incrementa l'indice del buffer
-    inc %edi
-
-    ret
-
 storeProducts:
     mov %eax, num_products        # Legge parametro funzione caricato prima in eax e lo salva nella variabile num_products
     imul $4, %eax                 # 4 byte per prodotto
@@ -144,9 +129,8 @@ _file_close:
     mov $6, %eax        # syscall close
     mov fd, %ecx      # File descriptor
     int $0x80           # Interruzione del kernel
-    
-    mov num_products, %eax
-    ret
 
 _ret:
+    mov products_pointer, %eax
+    mov num_products, %ebx
     ret
