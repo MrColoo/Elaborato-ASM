@@ -13,8 +13,8 @@
 
 
 algoritmo_edf: 
-movl %eax, num
- 
+movl %eax, num                      # metto num in eax 
+
 pushl %ebp                           # salvo il frame pointer  
 movl %esp, %ebp                     # Imposto il nuovo frame pointer (salvato in esp) 
 subl $16, %esp                      # alloco spazio per le variabili locali  
@@ -79,7 +79,7 @@ incrementa_j:
  
 fine_ciclo_interno: 
     popl %ecx                        # Ripristina ecx (i) dallo stack 
-    decl %ecx                        # i++ 
+    incl %ecx                        # i++ 
     jmp sort_loop_esterno            # Ripeti il ciclo esterno 
  
 fine_sort: 
@@ -89,7 +89,7 @@ fine_sort:
     movl $0, %edi                   # i a 0  (i=0) 
  
 calcolo_penalita: 
-    cmpl num,%edi                   # confronto i con num 
+    cmpl num, %edi                   # confronto i con num 
     jge fine_penalita               # salto a fine penalita  
  
     shl $4, %edi                    # moltiplico 16 per i (dimensione struct) 
