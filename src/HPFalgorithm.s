@@ -6,11 +6,11 @@ num: .int 0
 processi: .int 0
   .section .text
 
-.global hpfAlgorithm    # rende visibile il simbolo findNum al linker
+.global hpfAlgorithm   
 
 .type hpfAlgorithm, @function   # dichiarazione della funzione itoa
                         # la funzione converte un intero in una stringa
-                        # il numero da convertire deve esse
+                       
 
 hpfAlgorithm:
 movl %eax, num

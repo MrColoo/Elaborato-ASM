@@ -5,11 +5,11 @@
  processi: .int 0
  .section .text 
 
-.global algoritmo_edf    # rende visibile il simbolo findNum al linker
+.global algoritmo_edf   
 
 .type algoritmo_edf, @function   # dichiarazione della funzione itoa
                         # la funzione converte un intero in una stringa
-                        # il numero da convertire deve esse
+                       
 
 
 algoritmo_edf: 
