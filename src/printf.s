@@ -29,7 +29,7 @@ print:
     # Stampa il contenuto della riga
     mov $4, %eax        # syscall write
     mov %ecx, %ecx
-    # mov $1, %ebx        # File descriptor standard output (stdout)
+    mov $1, %ebx        # File descriptor standard output (stdout) 
     int $0x80           # Interruzione del kernel
 
 _ret:

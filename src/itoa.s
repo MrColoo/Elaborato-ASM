@@ -7,6 +7,9 @@
 car:
     .byte 0 # la variabile car è dichiarata di tipo byte
 
+buffer:
+    .byte 255
+
 .section .text
 
 .global itoa # rende visibile il simbolo itoa al linker
@@ -18,6 +21,9 @@ car:
 itoa:
     mov $0, %ecx # carica il numero 0 in ecx
 
+    xor %edi, %edi
+    mov $buffer, %esi
+
 continua_a_dividere:
     cmp $10, %eax   # confronta 10 con il contenuto di eax
     jge dividi  # salta all'etichetta dividi se eax è
@@ -27,8 +33,7 @@ continua_a_dividere:
                 # contare quante push eseguo
                 # ad ogni push salvo nello stack una cifra del
                 # numero (a partire da quella meno significativa)
-    mov %ecx, %ebx  # pone il valore di ecx in ebx
-    jmp stampa  # salta all'etichetta stampa
+    jmp salva_in_stringa  # salta all'etichetta stampa
 
 dividi:
     movl $0, %edx   # carica 0 in edx
@@ -41,51 +46,28 @@ dividi:
     inc %ecx # incrementa il contatore delle cifre da stampare
     jmp continua_a_dividere
 
-stampa:
-    cmp $0, %ebx    # controlla se ci sono (ancora) caratteri da
+salva_in_stringa:
+    
+    cmp %ecx, %edi    # controlla se ci sono (ancora) caratteri da
                     # stampare
     je fine_itoa    # se ebx=0 ho stampato tutto, quindi salto alla fine
     popl %eax   # preleva l'elemento da stampare dallo stack
-    movb %al, car   # memorizza nella variabile car il valore contenuto
-                    # negli 8 bit meno significativi del registro eax
-                    # gli altri bit del registro non ci interessano
-                    # visto che una cifra decimale e' contenuta in
-                    # un solo byte
-    addb $48, car   # somma al valore car il codice ascii del carattere
-                    # '0' (zero)
-    dec %ebx # decrementa di 1 il numero di cifre da stampare
     
-    pushw %bx   # salviamo il valore di bx nello stack poiché
-                # per effettuare la stampa dobbiamo modificare
-                # i valori dei registri come richiesto
-                # dalla funzione del sistema operativo WRITE
-    movl $4, %eax   # codice della funzione write
-    movl $1, %ebx   # la write scrive nello standard output
-                    # identificato dal file descriptor 1
-    leal car, %ecx  # il puntatore della stringa da stampare deve
-                    # essere caricato in ecx
-                    # l'istruzione lea carica l'indirizzo della
-                    # locazione di memoria indicata dall’etichetta car,
-                    # nel registro ecx
-    mov $1, %edx    # la lunghezza della stringa da stampare deve
-                    # essere caricata in edx
-    int $0x80   # chiamata all'interrupt 0x80 per la stampa di car
-    popw %bx    # recupera il contatore dei caratteri da stampare
-                # salvato nello stack prima della chiamata alla
-                # funzione write
-    jmp stampa  # ritorna all'etichetta stampa per stampare il
+    addb $48, %al   # somma al valore car il codice ascii del carattere
+                    # '0' (zero)
+
+    mov %eax, (%esi)
+    inc %esi
+    inc %edi
+
+    jmp salva_in_stringa  # ritorna all'etichetta stampa per stampare il
                 # prossimo carattere. Notare che il blocco di
                 # istruzioni compreso tra l'etichetta stampa
                 # e l'istruzione jmp stampa e' un classico
                 # esempio di come creare un ciclo while in assembly
 fine_itoa:
-    movb $10, car   # copia il codice ascii del carattere line feed
-                    # (per andare a capo riga) nella variabile car
-    movl $4, %eax   # solito blocco di istruzioni per la stampa
-    movl $1, %ebx
-    leal car, %ecx
-    mov $1, %edx
-    int $0x80
+    mov $buffer, %eax
+
     ret # fine della funzione itoa
         # l'esecuzione riprende dall'istruzione sucessiva
         # alla call che ha invocato itoa

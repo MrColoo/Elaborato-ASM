@@ -6,7 +6,7 @@
 
 
 menu_prompt: 
-    .ascii "[1]: Earliest Deadline First (EDF)\n[2]: Highest Priority First (HPF)\n[3]: Esci dal programma\n>\0"
+    .ascii "Indicare l'algoritmo di pianificazione che si vuole utilizzare:\n[1]: Earliest Deadline First (EDF)\n[2]: Highest Priority First (HPF)\n[3]: Esci dal programma\n> \0"
 product_fmt: 
     .ascii "%d:%d\n\0"
 conclusion_fmt: 
@@ -31,18 +31,21 @@ num_products: .int 0        # contatore numero di prodotti presenti nel file
     .global _start
 
 _start:
-    call findNumProducts           # Chiama la funzione per aprire il file
-    call storeProducts
-    mov %eax, products_pointer
-    mov %ebx, num_products
-    call itoa
-    call printf
-    mov num_products, %eax
-    call itoa
+    call findNumProducts            # Chiama la funzione per trovare il numero di prodotti nel file
+    call storeProducts              # Chiama la funzione per salvare i prodotti nell'array
+    mov %eax, products_pointer      # Salva il puntatore all'array di prodotti nella variabile
+    mov %ebx, num_products          # Salva il numero di prodotti nella variabile
+    
+display_menu:
+    mov $menu_prompt, %eax          # carica l'indirizzo della stringa del menu in EAX
+    call printf                     # stampa la stringa
+    call readstr                    # legge l'input da tastiera e carica in EAX l'indirizzo della stringa
+    call atoi                       # converte in intero l'input da tastiera
     call printf
 
-    leal penalty_fmt, %eax
-    call printf
+
+
+    
 
 # Fine programma
 _exit:
