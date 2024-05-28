@@ -7,7 +7,7 @@
     num_products_saved: .int 0        # Numero di prodotti salvati in array
 
     filename:    
-        .asciz "Ordini.txt"     # Nome del file di testo da leggere
+        .ascii "Ordini.txt"     # Nome del file di testo da leggere
     fd:
         .int 0                  # File descriptor
 
@@ -22,12 +22,12 @@
     .int 0                     # 10 prodotti x 4 byte ciascuno (32 bit per prodotto)
 
     read_error:
-        .asciz "Errore nella apertura del file\n" # Stringa di errore per apertura file
+        .ascii "Errore nella apertura del file\n" # Stringa di errore per apertura file
 
     products_pointer:
         .int 0
     error_msg:
-        .asciz "Errore nel file"
+        .ascii "Errore nel file"
 
 .section .text
 
