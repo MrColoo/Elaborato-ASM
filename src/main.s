@@ -7,6 +7,8 @@
 
 menu_prompt: 
     .ascii "Indicare l'algoritmo di pianificazione che si vuole utilizzare:\n[1]: Earliest Deadline First (EDF)\n[2]: Highest Priority First (HPF)\n[3]: Esci dal programma\n> \0"
+invalid_option: 
+    .ascii "Il valore inserito non è valido \0"
 product_fmt: 
     .ascii "%d:%d\n\0"
 conclusion_fmt: 
@@ -37,15 +39,26 @@ _start:
     mov %ebx, num_products          # Salva il numero di prodotti nella variabile
     
 display_menu:
-    mov $menu_prompt, %eax          # carica l'indirizzo della stringa del menu in EAX
+    leal menu_prompt, %eax          # carica l'indirizzo della stringa del menu in EAX
     call printf                     # stampa la stringa
     call readstr                    # legge l'input da tastiera e carica in EAX l'indirizzo della stringa
-    call atoi                       # converte in intero l'input da tastiera
-    call printf
+    call atoi
+    call verifica_menu
+    jmp display_menu
 
+verifica_menu:
+    cmp $1, %eax
+    # EDF
 
+    cmp $2, %eax
+    # HPF
 
-    
+    cmp $3, %eax
+    je _exit
+
+    leal invalid_option, %eax
+    call printerror
+    ret
 
 # Fine programma
 _exit:

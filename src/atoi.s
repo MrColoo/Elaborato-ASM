@@ -14,9 +14,9 @@
                         # stato caricato nel registro eax
 atoi:
     xor %ecx, %ecx
-    
+
 loop:
-    cmp $'0', (%eax)
+    cmp $0, (%eax)
     je fine_atoi
     
     imul $10, %ecx
