@@ -22,12 +22,13 @@
     .int 0                     # 10 prodotti x 4 byte ciascuno (32 bit per prodotto)
 
     read_error:
-        .asciz "Errore nella apertura del file\n" # Stringa di errore per apertura file
+        .ascii "Errore nella apertura del file\n\0" # Stringa di errore per apertura file
+    error_msg:
+        .ascii "Errore nel file\n\0"
 
     products_pointer:
         .int 0
-    error_msg:
-        .asciz "Errore nel file"
+    
 
 .section .text
 
@@ -132,7 +133,7 @@ next_field:
 
 error:
     # Stampiamo il messaggio di errore
-    leal $error_msg, %eax     # carico l'indirizzo di $error_msg
+    leal error_msg, %eax     # carico l'indirizzo di $error_msg
     call printf
 
     ret
