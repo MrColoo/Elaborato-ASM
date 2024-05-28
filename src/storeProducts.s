@@ -106,6 +106,11 @@ parse_buffer:
     je next_field       # Se sì, passa al prossimo campo
 
     sub $'0', %al        # Converte il carattere ASCII in valore numerico
+    
+    cmp $9, %al # controllo che il numero sia un numero 
+    
+    jg error      # se non e un numero
+
     imul $10, %ecx       # Moltiplica l'accumulatore per 10
     add %al, %cl        # Aggiunge il valore numerico all'accumulatore
     jmp increment_index
@@ -123,6 +128,16 @@ next_field:
     xor %ecx, %ecx       # Resetta l'accumulatore per il prossimo numero
     add $1, %edi         # Passa al prossimo campo del prodotto
     jmp increment_index
+
+error:
+
+    # Stampiamo il messaggio di errore
+    leal $error_msg, %eax     # carico l'indirizzo di $error_msg
+
+    call printf 
+
+    ret
+
 
 # Chiude il file
 _file_close:
