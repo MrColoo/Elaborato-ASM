@@ -38,14 +38,10 @@ writefile:
     int $0x80
 
     # Esci dal programma
-    movl $1, %eax                # sys_exit
-    xorl %ebx, %ebx              # exit code 0
-    int $0x80
-
+    ret
+    
 error:
-    movl $1, %eax                # sys_exit
-    movl $1, %ebx                # codice uscita 1
-    int $0x80
+    ret
 
 write_string:
     # Calcola la lunghezza della stringa
@@ -63,7 +59,7 @@ write_now:
     movl $4, %eax                # sys_write
     movl %edi, %ebx              # file descriptor
     movl %esi, %ecx              # buffer
-    movl %edx, %edx              # length
+    movl %edx, %edx              # lunghezza
     int $0x80
     popl %ecx                    # Ripristina %ecx
     ret
