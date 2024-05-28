@@ -1,118 +1,100 @@
-.section .data
- time: .int 0
- totalPenalty: .int 0
- num: .int 0
- processi: .int 0
- .section .text 
+# ###################
+# filename: EDFalgorithm.s
+# ###################
 
-.global algoritmo_edf   
+.section .bss
+    products_pointer: .int 0
+    num_products: .int 0
 
-.type algoritmo_edf, @function   # dichiarazione della funzione itoa
-                        
-                       
+.section .text
+
+.global EDFalgorithm # rende visibile il simbolo edf al linker
+
+.type EDFalgorithm, @function   # dichiarazione della funzione edf
+                        # la funzione scambia due prodotti nell'array
+
+EDFalgorithm:
+    mov %eax, products_pointer
+    mov %ebx, num_products
+
+    dec %ebx            # num_products - 1
+    xor %ecx, %ecx      # reset ECX che usero come i
+    
+external_loop:
+    cmp %ecx, %ebx      # compara i con numproducts - 1
+    jge print_results
+    xor %edx, %edx      # reset EDX che usero come j
+    push %ebx
+
+    sub %ecx, %ebx      # num_products - i - 1
+    push %eax
+    
+internal_loop:
+    cmp %edx, %ebx      # compara j con num_products - i -1
+    jge end_internal_loop
+    
+    add %edx, %eax      # scorri a elemento j
+
+if1:
+    mov 7(%eax), %esi
+    cmp 3(%eax), %esi # compara priorita elemento j con priorita elemento j+1
+    jge if2  # se è maggiore o uguale torna al loop
+
+    call swapProducts
+    inc %edx
+    jmp back_internal_loop
+
+if2:
+    cmp 3(%eax), %esi # compara priorita elemento j con priorita elemento j+1
+    jne back_internal_loop
+
+    mov 6(%eax), %esi
+    cmp 2(%eax), %esi # compara scadenza elemento j con scadenza elemento j+1
+    jle back_internal_loop
+
+    call swapProducts
+
+back_internal_loop:
+    inc %edx
+    jmp internal_loop
+end_internal_loop:
+    pop %eax
+    pop %ebx
+    inc %ecx
+    jmp external_loop
+
+print_results:
+    xor %ecx, %ecx   # uso ECX come i
+    xor %edi, %edi  # uso EDI per salvare time
+    xor %esi, %esi  # uso ESI per salvare la penalità totale
+
+print_products:
+    cmp $0, %ebx
+    je print_stats
+    push %eax
+    mov (%eax), %eax
+    call itoa
+    call printf
+
+    mov $':', %eax
+    call printf
+
+    pop %eax
+    push %eax
+    mov 2(%eax), %eax
+    call itoa
+    call printf
+    pop %eax
+
+    add 1(%eax), %edi
+
+    add $4, %eax
+
+    dec %ebx
+    jmp print_products
+
+print_stats:
 
 
-algoritmo_edf: 
-movl %eax, num                      # metto num in eax 
 
-pushl %ebp                           # salvo il frame pointer  
-movl %esp, %ebp                     # Imposto il nuovo frame pointer (salvato in esp) 
-subl $16, %esp                      # alloco spazio per le variabili locali  
- 
- 
-# Ciclo esterno (for i = 0; i < num-1; i++) 
-sort_loop_esterno: 
-    cmpl $0, %ecx                    # Confronta ecx con 0 
-    jl fine_sort                     # Se ecx < 0, termina il ciclo di ordinamento 
- 
-    pushl %ecx                       # Salva ecx (i) nello stack 
-    movl $0, %edi                    # Inizializza j a 0 
- 
-# Ciclo interno (for j = 0; j < num-i-1; j++) 
-sort_loop_interno: 
-    movl num, %ebx                   # Carica num in ebx 
-    subl %ecx, %ebx                  # ebx = num - i 
-    decl %ebx                        # ebx = num - i - 1 
-    cmpl %edi, %ebx                  # Confronta j con num - i - 1 
-    jge fine_ciclo_interno           # Se j >= num - i - 1, termina il ciclo interno 
- 
-    shl $4, %edi                     # Moltiplica j per 16 (dimensione di struct processo) 
- 
-    # Accesso a processi[j] 
-    movl processi(,%edi,1), %eax     # Carica l'indirizzo di processi[j] in eax 
-    movl 8(%eax), %ebx               # Carica processi[j].scadenza in ebx 
- 
-    addl $16, %edi                   # Calcola l'offset per processi[j+1] 
-    movl processi(,%edi,1), %edx     # Carica l'indirizzo di processi[j+1] in edx 
-    movl 8(%edx), %ecx               # Carica processi[j+1].scadenza in ecx 
- 
-    cmpl %ebx, %ecx                  # Confronta processi[j].scadenza con processi[j+1].scadenza 
-    jg scambio_processi              # Se processi[j].scadenza > processi[j+1].scadenza, scambia 
- 
-    je cmp_priorita                  # Se processi[j].scadenza == processi[j+1].scadenza, confronta priorità 
- 
-    jmp incrementa_j                 # Altrimenti, incrementa j 
- 
-cmp_priorita: 
-    movl 12(%eax), %ebx              # Carica processi[j].priorita in ebx 
-    movl 12(%edx), %ecx              # Carica processi[j+1].priorita in ecx 
- 
-    cmpl %ebx, %ecx                  # Confronta processi[j].priorita con processi[j+1].priorita 
-    jl scambio_processi              # Se processi[j].priorita < processi[j+1].priorita, scambia 
- 
-    jmp incrementa_j                 # Altrimenti, incrementa j 
- 
-scambio_processi: 
-    subl $16, %edi                   # Ripristina l'offset di j 
-    movl processi(,%edi,1), %eax     # Carica processi[j] in eax 
-    addl $16, %edi                   # Incrementa di nuovo l'offset per puntare a processi[j+1] 
-    movl processi(,%edi,1), %ebx     # Carica processi[j+1] in ebx 
- 
-    movl %ebx, processi(,%edi,1)     # Scrive processi[j+1] in processi[j] 
-    subl $16, %edi                   # Ripristina l'offset di j 
-    movl %eax, processi(,%edi,1)     # Scrive processi[j] in processi[j+1] 
- 
-incrementa_j: 
-    shrl $4, %edi                    # Divide l'indice per 16 per ottenere j originale 
-    incl %edi                        # Incrementa j 
-    jmp sort_loop_interno            # Ripeti il ciclo interno 
- 
-fine_ciclo_interno: 
-    popl %ecx                        # Ripristina ecx (i) dallo stack 
-    incl %ecx                        # i++ 
-    jmp sort_loop_esterno            # Ripeti il ciclo esterno 
- 
-fine_sort: 
- 
-    movl $0, time                   # inizializzo time a 0 
-    movl $0, totalPenalty           # inizializzo totalPenalty a 0 
-    movl $0, %edi                   # i a 0  (i=0) 
- 
-calcolo_penalita: 
-    cmpl num, %edi                   # confronto i con num 
-    jge fine_penalita               # salto a fine penalita  
- 
-    shl $4, %edi                    # moltiplico 16 per i (dimensione struct) 
-    movl processi(,%edi,1), %eax    # carico processi[i] in eax  
-    shrl $4, %edi                   # ripristino l'indice edi  
- 
-    movl 4(%eax), %ebx              # carico i processi processi[i].identidicativo in ebx  
-    addl %ebx, time                 # time + processi[i] 
- 
-    # qui calcolo la penalita se il tempo supera la durata  
- 
-    movl time, %ebx                 # carico time in ebx
-    cmpl 8(%eax), %ebx              # confronto time con processi[i].scadenza  
-    jle no_penalita                 # salto a no_penalita 
- 
-    subl 8(%eax), %ebx              # Calcola il ritardo (time - processi[i].scadenza) 
-    imull 12(%eax), %ebx            # Moltiplica il ritardo per processi[i].priorita 
-    addl %ebx, totalPenalty         # Aggiungo la penalità totale 
- 
- 
-no_penalita: 
-    incl %edi                       # incremento i 
-    jmp calcolo_penalita            # salto a calcolo_penalita 
- 
-fine_penalita: 
-    ret
+
