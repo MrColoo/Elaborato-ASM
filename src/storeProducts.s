@@ -26,6 +26,8 @@
 
     products_pointer:
         .int 0
+    error_msg:
+        .asciz "Errore nel file"
 
 .section .text
 
@@ -136,7 +138,7 @@ error
     mov $6, %eax        # syscall close
     mov fd, %ecx      # File descriptor
     int $0x80           # Interruzione del kernel
-    call printf 
+    call printf  
 
     ret
 
