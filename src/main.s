@@ -48,7 +48,7 @@ display_menu:
 
 verifica_menu:
     cmp $1, %eax
-    # EDF
+    je EDF
 
     cmp $2, %eax
     # HPF
@@ -65,3 +65,8 @@ _exit:
     mov $1, %eax        # syscall exit
     xor %ebx, %ebx      # Codice di uscita 0
     int $0x80           # Interruzione del kernel
+
+EDF:
+    mov products_pointer, %eax
+    mov num_products, %ebx
+    call EDFalgorithm

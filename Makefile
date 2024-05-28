@@ -2,7 +2,7 @@ EXE = bin/pianificatore
 AS_FLAGS = --32 
 DEBUG = -gstabs
 LD_FLAGS = -m elf_i386
-OBJ = obj/main.o obj/printf.o obj/printerror.o obj/itoa.o obj/atoi.o obj/findNumProducts.o obj/HPFalgorithm.o obj/EDFalgorithm.o obj/storeProducts.o obj/readstr.o
+OBJ = obj/main.o obj/printf.o obj/printerror.o obj/itoa.o obj/atoi.o obj/findNumProducts.o obj/HPFalgorithm.o obj/EDFalgorithm.o obj/storeProducts.o obj/readstr.o obj/swapProducts.o
 
 all: $(EXE)
 
@@ -38,6 +38,9 @@ obj/EDFalgorithm.o: src/EDFalgorithm.s
 
 obj/readstr.o: src/readstr.s
 	as $(AS_FLAGS) $(DEBUG) src/readstr.s -o obj/readstr.o
+
+obj/swapProducts.o: src/swapProducts.s
+	as $(AS_FLAGS) $(DEBUG) src/swapProducts.s -o obj/swapProducts.o
 
 
 clean:
