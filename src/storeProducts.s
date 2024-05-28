@@ -129,11 +129,13 @@ next_field:
     add $1, %edi         # Passa al prossimo campo del prodotto
     jmp increment_index
 
-error:
+error
 
     # Stampiamo il messaggio di errore
     leal $error_msg, %eax     # carico l'indirizzo di $error_msg
-
+    mov $6, %eax        # syscall close
+    mov fd, %ecx      # File descriptor
+    int $0x80           # Interruzione del kernel
     call printf 
 
     ret
