@@ -26,6 +26,8 @@
 
     products_pointer:
         .int 0
+    error_msg:
+        .asciz "Errore nel file"
 
 .section .text
 
