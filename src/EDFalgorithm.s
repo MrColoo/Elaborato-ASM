@@ -2,9 +2,18 @@
 # filename: EDFalgorithm.s
 # ###################
 
+.section .data
+
+    conclusione_str:
+        .ascii "Conclusione: \0"
+    penalty_str:
+        .ascii "Penalty: \0"
+    
+
 .section .bss
     products_pointer: .int 0
     num_products: .int 0
+
 
 .section .text
 
@@ -87,6 +96,8 @@ print_products:
     pop %eax
 
     add 1(%eax), %edi
+    cmp %edi, 2(%eax)
+    jg update_penalty
 
     add $4, %eax
 
@@ -94,7 +105,34 @@ print_products:
     jmp print_products
 
 print_stats:
+    leal conclusione_str, %eax
+    call printf
+    mov %edi, %eax
+    call itoa
+    call printf
 
+    leal penalty_str, %eax
+    call printf
+    mov %esi, %eax
+    call itoa
+    call printf
+
+    ret
+
+update_penalty:
+    call calcola_penalty
+    add $4, %eax
+
+    dec %ebx
+    jmp print_products
+    
+calcola_penalty:
+    push %edi
+    sub 2(%eax), %edi
+    imul 3(%eax), %edi
+    add %edi, %esi
+    pop %edi
+    ret
 
 
 

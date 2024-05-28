@@ -22,12 +22,13 @@
     .int 0                     # 10 prodotti x 4 byte ciascuno (32 bit per prodotto)
 
     read_error:
-        .ascii "Errore nella apertura del file\n" # Stringa di errore per apertura file
+        .ascii "Errore nella apertura del file\n\0" # Stringa di errore per apertura file
+    error_msg:
+        .ascii "Errore nel file\n\0"
 
     products_pointer:
         .int 0
-    error_msg:
-        .ascii "Errore nel file"
+    
 
 .section .text
 
@@ -110,7 +111,6 @@ parse_buffer:
     sub $'0', %al        # Converte il carattere ASCII in valore numerico
     
     cmp $9, %al # controllo che il numero sia un numero 
-    
     jg error      # se non e un numero
 
     imul $10, %ecx       # Moltiplica l'accumulatore per 10
@@ -131,17 +131,12 @@ next_field:
     add $1, %edi         # Passa al prossimo campo del prodotto
     jmp increment_index
 
-error
-
+error:
     # Stampiamo il messaggio di errore
-    leal $error_msg, %eax     # carico l'indirizzo di $error_msg
-    mov $6, %eax        # syscall close
-    mov fd, %ecx      # File descriptor
-    int $0x80           # Interruzione del kernel
-    call printf  
+    leal error_msg, %eax     # carico l'indirizzo di $error_msg
+    call printf
 
     ret
-
 
 # Chiude il file
 _file_close:
