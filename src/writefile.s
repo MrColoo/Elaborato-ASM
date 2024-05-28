@@ -46,14 +46,30 @@ _file_open_write:
     call lettura_stringa
     movl $time, %eax                    # metto time in eax 
     call itoa                           # call a itoa 
-    
+    movb newline, buffer(%eax)          # metto l'offset in eax 
+    call buffer_scrittura               # call a scrittura_buffer
 
 
+     # Chiudo il file
+    movl $6, %eax            # sys_close
+    movl %edi, %ebx          # file descriptor
+    int $0x80
 
+    # Esco dal programma
+    movl $1, %eax            # sys_exit
+    xorl %ebx, %ebx          # exit code 0
+    int $0x80 
+  
 error:
     movl $1, %eax               # sys_exit
     movl $1, %ebx           # codice uscita 1
     int $0x80
+
+lettura_stringa:
+    pusha                      # salvo tutti i registri nello stack 
+    movl $4, %eax              # sys_write
+    movl %edi, 
+
 
 
     
