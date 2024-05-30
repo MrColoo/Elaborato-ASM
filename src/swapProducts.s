@@ -57,3 +57,4 @@ swapProducts:
     pop %ebx
     pop %eax
   
+    ret
