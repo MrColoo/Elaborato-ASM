@@ -18,6 +18,11 @@ swapProducts:
 
     mov %eax, %esi
 
+    xor %eax, %eax
+    xor %ebx, %ebx
+    xor %ecx, %ecx
+    xor %edx, %edx
+
     # Salva il primo prodotto nei registri temporanei
     movb (%esi), %al
     movb 1(%esi), %bl
