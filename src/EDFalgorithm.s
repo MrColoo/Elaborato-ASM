@@ -92,13 +92,18 @@ print_products:
     call itoa                   # converte il valore in ASCII
     call printf                 # stampa il valore
 
-    mov $':', %eax              
+    mov $':', %eax              # carico il codice ASCII di ':'
+    call itoa                   # converto codice ASCII in stringa 
     call printf                 # stampa ':'
 
     xor %eax, %eax              # resetto EAX
     mov 2(%edx), %al
     call itoa                   # converte il valore in ASCII
     call printf                 # stampa il valore
+
+    mov $10, %eax               # carico il codice ASCII di '\n'
+    call itoa                   # converto codice ASCII in stringa 
+    call printf                 # stampa '\n'
 
     add 1(%edx), %edi           # somma la durata del prodotto
     cmp 2(%edx), %edi           # compara il tempo accumulato con la scadenza del prodotto corrente
