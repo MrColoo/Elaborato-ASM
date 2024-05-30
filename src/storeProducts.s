@@ -129,11 +129,6 @@ next_field:
     mov %cl, (%edi)     # Salva l'accumulatore nel campo corrente
     xor %ecx, %ecx       # Resetta l'accumulatore per il prossimo numero
     inc %edi         # Passa al prossimo campo del prodotto
-
-    mov products_pointer, %edx #######
-    mov (%edx), %cl #####
-    xor %ecx, %ecx  ########     # Resetta l'accumulatore per il prossimo numero
-    xor %edx, %edx  #########     # Resetta l'accumulatore per il prossimo numero
     
     jmp increment_index
 
