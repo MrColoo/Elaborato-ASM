@@ -42,7 +42,10 @@ internal_loop:
     cmp %ebx, %esi              # compara j con num_products - i -1
     jge end_internal_loop       # se j > num_products - i - 1 salta alla fine del ciclo for
     
+    push %esi
+    imul $4, %esi               # moltiplico esi per 4
     add %esi, %eax              # scorri a elemento j
+    pop %esi
 
 if1:
     xor %ecx, %ecx              # reset ECX che usero come registro temporaneo per i confronti
