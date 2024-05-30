@@ -7,7 +7,7 @@
     num_products_saved: .int 0        # Numero di prodotti salvati in array
 
     filename:    
-        .asciz "Ordini.txt"     # Nome del file di testo da leggere
+        .ascii "Ordini.txt"     # Nome del file di testo da leggere
     fd:
         .int 0                  # File descriptor
 
