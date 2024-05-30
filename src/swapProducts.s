@@ -29,18 +29,21 @@ swapProducts:
     movb 2(%esi), %cl
     movb 3(%esi), %dl
 
+    push %al
     # Sposta il secondo prodotto al posto del primo
     mov 4(%esi), %al
     movb %al, (%esi)
 
-    mov 5(%esi), %bl
-    movb %bl, 1(%esi)
+    mov 5(%esi), %al
+    movb %al, 1(%esi)
 
-    mov 6(%esi), %cl
-    movb %cl, 2(%esi)
+    mov 6(%esi), %al
+    movb %al, 2(%esi)
 
-    mov 7(%esi), %dl
-    movb %dl, 3(%esi)
+    mov 7(%esi), %al
+    movb %al, 3(%esi)
+
+    pop %al
 
     #Sposta il primo prodotto al posto del secondo
     movb %al, 4(%esi)
