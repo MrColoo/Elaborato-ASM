@@ -51,7 +51,6 @@ if1:
     jge if2                     # se è maggiore o uguale passa alla seconda condizione
 
     call swapProducts           # altrimenti chiama la funzione che scambia i due prodotti nell'array
-    inc %esi                    # incrementa j
     jmp back_internal_loop      # torna al ciclo for interno
 
 if2:
