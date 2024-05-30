@@ -5,27 +5,27 @@
 .section .data
 
 
-menu_prompt: 
-    .ascii "Indicare l'algoritmo di pianificazione che si vuole utilizzare:\n[1]: Earliest Deadline First (EDF)\n[2]: Highest Priority First (HPF)\n[3]: Esci dal programma\n> \0"
-invalid_option: 
-    .ascii "Il valore inserito non è valido \0"
-product_fmt: 
-    .ascii "%d:%d\n\0"
-conclusion_fmt: 
-    .ascii "Conclusione: %d\n\0"
-penalty_fmt:
-    .ascii "Penalty: %d\n\0"
+    menu_prompt: 
+        .ascii "Indicare l'algoritmo di pianificazione che si vuole utilizzare:\n[1]: Earliest Deadline First (EDF)\n[2]: Highest Priority First (HPF)\n[3]: Esci dal programma\n> \0"
+    invalid_option: 
+        .ascii "Il valore inserito non è valido \0"
+    product_fmt: 
+        .ascii "%d:%d\n\0"
+    conclusion_fmt: 
+        .ascii "Conclusione: %d\n\0"
+    penalty_fmt:
+        .ascii "Penalty: %d\n\0"
 
 
-format_error:
-    .ascii "Alcuni valori indicati nel file non sono corretti\n"
+    format_error:
+        .ascii "Alcuni valori indicati nel file non sono corretti\n"
 
 
-element_size: .word 4       # Ogni prodotto ha 4 byte (1 per ciascun campo)
-input_choice: .byte 0       # Scelta dell'algoritmo di pianificazione
+    element_size: .word 4       # Ogni prodotto ha 4 byte (1 per ciascun campo)
+    input_choice: .byte 0       # Scelta dell'algoritmo di pianificazione
 
-products_pointer: .int 0       # Puntatore all'array di prodotti
-num_products: .int 0        # contatore numero di prodotti presenti nel file
+    products_pointer: .int 0       # Puntatore all'array di prodotti
+    num_products: .int 0        # contatore numero di prodotti presenti nel file
 
 
 
@@ -36,7 +36,7 @@ _start:
     call findNumProducts            # Chiama la funzione per trovare il numero di prodotti nel file
     call storeProducts              # Chiama la funzione per salvare i prodotti nell'array
     mov %eax, products_pointer      # Salva il puntatore all'array di prodotti nella variabile
-    mov %ebx, num_products          # Salva il numero di prodotti nella variabile
+    mov %ebx, num_products          # Salva il numero di prodotti nella variabile    
     
 display_menu:
     leal menu_prompt, %eax          # carica l'indirizzo della stringa del menu in EAX

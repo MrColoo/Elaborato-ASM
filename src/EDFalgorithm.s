@@ -17,59 +17,60 @@
 
 .section .text
 
-.global EDFalgorithm # rende visibile il simbolo edf al linker
+.global EDFalgorithm            # rende visibile il simbolo edf al linker
 
 .type EDFalgorithm, @function   # dichiarazione della funzione edf
-                        # la funzione scambia due prodotti nell'array
+                                # la funzione scambia due prodotti nell'array
 
 EDFalgorithm:
-    mov %eax, products_pointer
-    mov %ebx, num_products
+    mov %eax, products_pointer  # Salva nella variabile il puntatore al primo elemento dell'array
+    mov %ebx, num_products      # Salva nella variabile il numero dei prodotti nel file
 
-    dec %ebx            # num_products - 1
-    xor %ecx, %ecx      # reset ECX che usero come i
+    dec %ebx                    # num_products - 1
+    xor %edi, %edi              # reset EDI che usero come i
     
 external_loop:
-    cmp %ecx, %ebx      # compara i con numproducts - 1
-    jge print_results
-    xor %edx, %edx      # reset EDX che usero come j
+    cmp %ebx, %edi              # compara i con numproducts - 1
+    jge print_results           # Se i > num_products - 1 stampa i risultati
+    xor %esi, %esi              # reset ESI che usero come j
     push %ebx
 
-    sub %ecx, %ebx      # num_products - i - 1
-    push %eax
+    sub %edi, %ebx              # num_products - i - 1
+    push %eax                   # Salvo nella pila il puntatore al primo indirizzo dell'array
     
 internal_loop:
-    cmp %edx, %ebx      # compara j con num_products - i -1
-    jge end_internal_loop
+    cmp %ebx, %esi              # compara j con num_products - i -1
+    jge end_internal_loop       # se j > num_products - i - 1 salta alla fine del ciclo for
     
-    add %edx, %eax      # scorri a elemento j
+    add %esi, %eax              # scorri a elemento j
 
 if1:
-    mov 7(%eax), %esi
-    cmp 3(%eax), %esi # compara priorita elemento j con priorita elemento j+1
-    jge if2  # se è maggiore o uguale torna al loop
+    xor %ecx, %ecx              # reset ECX che usero come registro temporaneo per i confronti
+    mov 7(%eax), %cl            # copia in CL la priorita dell'elemento j+1
+    cmp %cl, 3(%eax)            # compara priorita elemento j con priorita elemento j+1
+    jge if2                     # se è maggiore o uguale passa alla seconda condizione
 
-    call swapProducts
-    inc %edx
-    jmp back_internal_loop
+    call swapProducts           # chiama la funzione che scambia i prodotti nell'array
+    inc %esi                    # incrementa j
+    jmp back_internal_loop      # torna al ciclo for interno
 
 if2:
-    cmp 3(%eax), %esi # compara priorita elemento j con priorita elemento j+1
-    jne back_internal_loop
+    cmp %cl, 3(%eax)            # compara priorita elemento j con priorita elemento j+1
+    jne back_internal_loop      # se non sono uguali, torna al ciclo for interno
 
-    mov 6(%eax), %esi
-    cmp 2(%eax), %esi # compara scadenza elemento j con scadenza elemento j+1
-    jle back_internal_loop
+    mov 6(%eax), %cl            # copia in CL la scadenza dell'elemento j+1
+    cmp %cl, 2(%eax)            # compara scadenza elemento j con scadenza elemento j+1
+    jle back_internal_loop      # se scadenza j <=  torna al ciclo for interno
 
     call swapProducts
 
 back_internal_loop:
-    inc %edx
+    inc %esi
     jmp internal_loop
 end_internal_loop:
     pop %eax
     pop %ebx
-    inc %ecx
+    inc %edi
     jmp external_loop
 
 print_results:
@@ -96,7 +97,7 @@ print_products:
     pop %eax
 
     add 1(%eax), %edi
-    cmp %edi, 2(%eax)
+    cmp 2(%eax), %edi
     jg update_penalty
 
     add $4, %eax

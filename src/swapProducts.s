@@ -14,32 +14,36 @@ swapProducts:
     push %ebx
     push %ecx
     push %edx
+    push %esi
 
-    # Salva il primo prodotto nei registri
-    movb (%eax), %cl
-    movb 1(%eax), %ch
-    movb 2(%eax), %dl
-    movb 3(%eax), %dh
+    mov %eax, %esi
+
+    # Salva il primo prodotto nei registri temporanei
+    movb (%esi), %al
+    movb 1(%esi), %bl
+    movb 2(%esi), %cl
+    movb 3(%esi), %dl
 
     # Sposta il secondo prodotto al posto del primo
-    mov 4(%eax), %bl
-    movb %bl, (%eax)
+    mov 4(%esi), %al
+    movb %al, (%esi)
 
-    mov 5(%eax), %bl
-    movb %bl, 1(%eax)
+    mov 5(%esi), %bl
+    movb %bl, 1(%esi)
 
-    mov 6(%eax), %bl
-    movb %bl, 2(%eax)
+    mov 6(%esi), %cl
+    movb %cl, 2(%esi)
 
-    mov 7(%eax), %bl
-    movb %bl, 3(%eax)
+    mov 7(%esi), %dl
+    movb %dl, 3(%esi)
 
     #Sposta il primo prodotto al posto del secondo
-    movb %cl, 4(%eax)
-    movb %ch, 5(%eax) 
-    movb %dl, 6(%eax)
-    movb %dh, 7(%eax)
+    movb %al, 4(%esi)
+    movb %bl, 5(%esi) 
+    movb %cl, 6(%esi)
+    movb %dl, 7(%esi)
 
+    pop %esi
     pop %edx
     pop %ecx
     pop %ebx

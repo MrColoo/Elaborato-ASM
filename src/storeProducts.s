@@ -44,12 +44,12 @@ storeProducts:
 
      # Ottiene l'attuale fine dell'heap (program break)
     movl $45, %eax        # Syscall number for brk
-    movl $0, %ebx         # Argomento: 0 per ottenere l'attuale break
+    xor %ebx, %ebx         # Argomento: 0 per ottenere l'attuale break
     int $0x80             # Effettua la syscall
     movl %eax, products_pointer       # Salva l'attuale break in %edi
 
     # Allocazione della memoria per i prodotti
-    mov products_pointer, %ebx
+    movl products_pointer, %ebx
     addl malloc_size, %ebx      # Aumenta il break dei byte necessari a contenere tutti i prodotti
     movl $45, %eax        # Syscall number for brk
     int $0x80             # Effettua la syscall
@@ -110,7 +110,7 @@ parse_buffer:
 
     sub $'0', %al        # Converte il carattere ASCII in valore numerico
     
-    cmp $9, %al # controllo che il numero sia un numero 
+    cmp $'9', %al # controllo che il numero sia un numero 
     jg error      # se non e un numero
 
     imul $10, %ecx       # Moltiplica l'accumulatore per 10
@@ -126,13 +126,24 @@ increment_index:
     jmp _ret            # Esce dal programma
 
 next_field:
-    mov %ecx, (%edi)     # Salva l'accumulatore nel campo corrente
+    mov %cl, (%edi)     # Salva l'accumulatore nel campo corrente
     xor %ecx, %ecx       # Resetta l'accumulatore per il prossimo numero
-    add $1, %edi         # Passa al prossimo campo del prodotto
+    inc %edi         # Passa al prossimo campo del prodotto
+
+    mov products_pointer, %edx #######
+    mov (%edx), %cl #####
+    xor %ecx, %ecx  ########     # Resetta l'accumulatore per il prossimo numero
+    xor %edx, %edx  #########     # Resetta l'accumulatore per il prossimo numero
+    
     jmp increment_index
 
 error:
     # Stampiamo il messaggio di errore
+    
+    mov $6, %eax        # syscall close
+    mov fd, %ecx      # File descriptor
+    int $0x80           # Interruzione del kernel
+
     leal error_msg, %eax     # carico l'indirizzo di $error_msg
     call printf
 

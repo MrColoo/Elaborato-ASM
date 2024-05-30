@@ -12,12 +12,12 @@ Funzioni:
 
 Per sviluppare questo software in linguaggio Assembly AT&T x8086, dovrai seguire alcuni passaggi:
 
-1. **Lettura del file degli ordini**: Leggi il file specificato in input, estrai i dati relativi ai prodotti e memorizzali in una struttura dati appropriata.
-2. **Selezione dell'algoritmo di pianificazione**: Presenta un menu all'utente per la scelta dell'algoritmo tra EDF e HPF.
+✅1. **Lettura del file degli ordini**: Leggi il file specificato in input, estrai i dati relativi ai prodotti e memorizzali in una struttura dati appropriata.
+✅2. **Selezione dell'algoritmo di pianificazione**: Presenta un menu all'utente per la scelta dell'algoritmo tra EDF e HPF.
 3. **Implementazione degli algoritmi di pianificazione**: Scrivi il codice per l'esecuzione dell'algoritmo scelto, che pianifichi l'ordine di produzione dei prodotti e calcoli le penalità.
 4. **Stampa dei risultati a video:** Dopo la pianificazione, stampa a video l'ordine dei prodotti, l'unità di tempo prevista per la conclusione della produzione dell'ultimo prodotto e la somma delle penalità dovute ai ritardi di produzione.
 5. **Gestione dell'output su file (bonus):** Se l'utente fornisce un secondo file come parametro, salva i risultati della pianificazione in quel file.
-6. **Loop principale del programma:** Dopo la stampa dei risultati, torna al menu iniziale per consentire all'utente di eseguire una nuova pianificazione o uscire dal programma.
+✅6. **Loop principale del programma:** Dopo la stampa dei risultati, torna al menu iniziale per consentire all'utente di eseguire una nuova pianificazione o uscire dal programma.
 
 Per implementare questo software, dovrai definire una struttura dati per rappresentare i prodotti e i relativi parametri, scrivere codice per la lettura da file, implementare gli algoritmi di pianificazione e gestire l'input/output utente. Potresti anche considerare la gestione degli errori, ad esempio nel caso in cui il file degli ordini non sia formattato correttamente.
 
