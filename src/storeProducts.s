@@ -7,7 +7,7 @@
     num_products_saved: .int 0        # Numero di prodotti salvati in array
 
     filename:    
-        .ascii "Ordini.txt"     # Nome del file di testo da leggere
+        .ascii "Ordini.txt\0"     # Nome del file di testo da leggere
     fd:
         .int 0                  # File descriptor
 
@@ -152,5 +152,4 @@ _file_close:
 
 _ret:
     mov products_pointer, %eax
-    mov num_products, %ebx
     ret

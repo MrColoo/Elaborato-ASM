@@ -20,6 +20,11 @@ find_string_len:
     jmp find_string_len       # Ripete il ciclo
 
 printf:
+    push %eax
+    push %ebx
+    push %ecx
+    push %edx
+
     xor %edx, %edx
     mov %eax, %ecx # Buffer di output
     call find_string_len
@@ -32,14 +37,13 @@ print:
     mov $1, %ebx        # File descriptor standard output (stdout) 
     int $0x80           # Interruzione del kernel
 
+    pop %edx
+    pop %ecx
+    pop %ebx
+    pop %eax
+
 _ret:
     ret # fine della funzione printf
         # l'esecuzione riprende dall'istruzione sucessiva
         # alla call che ha invocato printf
-
-
-
-
-
-
         

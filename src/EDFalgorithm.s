@@ -8,6 +8,10 @@
         .ascii "Conclusione: \0"
     penalty_str:
         .ascii "Penalty: \0"
+    due_punti:
+        .ascii ":\0"
+    LF:
+        .ascii "\n\0"
     
 
 .section .bss
@@ -49,19 +53,19 @@ internal_loop:
 
 if1:
     xor %ecx, %ecx              # reset ECX che usero come registro temporaneo per i confronti
-    mov 7(%eax), %cl            # copia in CL la priorita dell'elemento j+1
-    cmp %cl, 3(%eax)            # compara priorita elemento j con priorita elemento j+1
-    jge if2                     # se è maggiore o uguale passa alla seconda condizione
+    mov 6(%eax), %cl            # copia in CL la scadenza dell'elemento j+1
+    cmp %cl, 2(%eax)            # compara scadenza elemento j con scadenza elemento j+1
+    jle if2                     # se è maggiore o uguale passa alla seconda condizione
 
     call swapProducts           # altrimenti chiama la funzione che scambia i due prodotti nell'array
     jmp back_internal_loop      # torna al ciclo for interno
 
 if2:
-    cmp %cl, 3(%eax)            # compara priorita elemento j con priorita elemento j+1
+    cmp %cl, 2(%eax)            # compara scadenza elemento j con scadenza elemento j+1
     jne back_internal_loop      # se non sono uguali, torna al ciclo for interno
 
-    mov 6(%eax), %cl            # copia in CL la scadenza dell'elemento j+1
-    cmp %cl, 2(%eax)            # compara scadenza elemento j con scadenza elemento j+1
+    mov 7(%eax), %cl            # copia in CL la scadenza dell'elemento j+1
+    cmp %cl, 3(%eax)            # compara scadenza elemento j con scadenza elemento j+1
     jle back_internal_loop      # se scadenza j <= scadenza j+1 torna al ciclo for interno
 
     call swapProducts           # altrimenti chiama la funzione che scambia i due prodotti nell'array
@@ -82,37 +86,38 @@ print_results:
     xor %edx, %edx              # uso EDX per scorrere l'array
 
 print_products:
+    mov %eax, %edx              # copio il puntatore al primo prodotto nell'array in EDX
+    mov num_products, %ebx
+
+keep_print:
     cmp $0, %ebx                # verifica se num_products == 0
     je print_stats              # se è vero salta a print_stats, altimenti continua
 
-    mov %eax, %edx              # copio il puntatore al primo prodotto nell'array in EDX
-    xor %eax, %eax              # resetto EAX
-
-    mov (%edx), %al             # copia l'ID del prodotto da stampare in AL
+    movzx (%edx), %eax             # copia l'ID del prodotto da stampare in AL
     call itoa                   # converte il valore in ASCII
     call printf                 # stampa il valore
 
-    mov $':', %eax              # carico il codice ASCII di ':'
-    call itoa                   # converto codice ASCII in stringa 
+    mov $due_punti, %eax              # carico il codice ASCII di ':'
     call printf                 # stampa ':'
 
-    xor %eax, %eax              # resetto EAX
-    mov 2(%edx), %al
+    mov %edi, %eax
     call itoa                   # converte il valore in ASCII
     call printf                 # stampa il valore
 
-    mov $10, %eax               # carico il codice ASCII di '\n'
-    call itoa                   # converto codice ASCII in stringa 
+    mov $LF, %eax               # carico il codice ASCII di '\n'
     call printf                 # stampa '\n'
-
-    add 1(%edx), %edi           # somma la durata del prodotto
-    cmp 2(%edx), %edi           # compara il tempo accumulato con la scadenza del prodotto corrente
+    
+    xor %eax, %eax
+    movzx 1(%edx), %eax
+    add %eax, %edi              # somma la durata del prodotto
+    movzx 2(%edx), %eax
+    cmp %eax, %edi              # compara il tempo accumulato con la scadenza del prodotto corrente
     jg update_penalty           # se è maggiore aggiorna la penalita accumulata
 
     add $4, %edx                # scorre al prossimo prodotto
 
     dec %ebx                    # decrementa il numero di prodotti
-    jmp print_products          
+    jmp keep_print          
 
 print_stats:
     leal conclusione_str, %eax  # carica in EAX l'indirizzo della stringa da stampare
@@ -121,11 +126,22 @@ print_stats:
     call itoa                   # lo converte in ASCII
     call printf                 # stampa il tempo totale
 
+    mov $LF, %eax               # carico il codice ASCII di '\n'
+    call printf                 # stampa '\n'
+
     leal penalty_str, %eax      # carica in EAX l'indirizzo della stringa da stampare
     call printf                 # stampa la stringa 
     mov %esi, %eax              # carica la penalita totale in EAX
     call itoa                   # la converte in ASCII
     call printf                 # stampa la penalita totale
+
+    mov $LF, %eax               # carico il codice ASCII di '\n'
+    call printf                 # stampa '\n'
+
+    # Dealloca la memoria dell'array
+    mov products_pointer, %ebx
+    mov $45, %eax               # syscall brk
+    int $0x80                   # Chiamata al kernel
 
     ret
 
@@ -134,15 +150,17 @@ update_penalty:
     add $4, %edx                # scorre al prossimo prodotto
 
     dec %ebx                    # decrementa il numero di prodotti
-    jmp print_products
+    jmp keep_print
     
 calcola_penalty:
     push %edi                   # salva nella pila TIME
-    sub 2(%edx), %edi           # sottrae a TIME la scadenza del prodotto corrente
-    imul 3(%edx), %edi          # al risultato, moltiplica la priorita del prodotto corrente
+    push %eax
+    xor %eax, %eax
+    movzx 2(%edx), %eax
+    sub %eax, %edi           # sottrae a TIME la scadenza del prodotto corrente
+    movzx 3(%edx), %eax
+    imul %eax, %edi          # al risultato, moltiplica la priorita del prodotto corrente
     add %edi, %esi              # somma alla penalita il risultato
+    pop %eax
     pop %edi                    # recupera TIME dalla pila
     ret
-
-
-

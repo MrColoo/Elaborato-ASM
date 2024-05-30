@@ -14,6 +14,10 @@
                         # la funzione legge da tastiera una stringa
                         # e salva il suo indirizzo in eax
 readstr:
+	push %ebx
+    push %ecx
+    push %edx
+
 	movl $3, %eax         # Set system call READ
 	movl $0, %ebx         # | <- keyboard
 	leal str, %ecx        # | <- destination
@@ -21,4 +25,9 @@ readstr:
 	int $0x80             # Execute syscall
 
 	leal str, %eax
+
+	pop %edx
+    pop %ecx
+    pop %ebx
+		
 	ret

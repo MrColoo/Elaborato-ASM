@@ -29,7 +29,10 @@
 
 
 findNumProducts:
-
+    push %ebx
+    push %ecx
+    push %edx
+    
 # Apre il file
 _file_open:
     mov $5, %eax        # syscall open
@@ -93,6 +96,11 @@ _file_close:
     int $0x80           # Interruzione del kernel
     
     mov num_products, %eax
+
+    pop %edx
+    pop %ecx
+    pop %ebx
+
     ret
 
 _ret:

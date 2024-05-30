@@ -19,6 +19,12 @@ buffer:
                         # il numero da convertire deve essere
                         # stato caricato nel registro eax
 itoa:
+    push %ebx
+    push %ecx
+    push %edx
+    push %edi
+    push %esi
+    
     mov $0, %ecx # carica il numero 0 in ecx
 
     xor %edi, %edi
@@ -67,6 +73,11 @@ salva_in_stringa:
                 # esempio di come creare un ciclo while in assembly
 fine_itoa:
     mov $buffer, %eax
+    pop %esi
+    pop %edi
+    pop %edx
+    pop %ecx
+    pop %ebx
 
     ret # fine della funzione itoa
         # l'esecuzione riprende dall'istruzione sucessiva
