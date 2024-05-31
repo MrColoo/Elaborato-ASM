@@ -2,7 +2,7 @@ EXE = bin/pianificatore
 AS_FLAGS = --32 
 DEBUG = -gstabs
 LD_FLAGS = -m elf_i386
-OBJ = obj/main.o obj/printf.o obj/printerror.o obj/itoa.o obj/atoi.o obj/findNumProducts.o obj/HPFalgorithm.o obj/EDFalgorithm.o obj/storeProducts.o obj/readstr.o obj/swapProducts.o
+OBJ = obj/main.o obj/printf.o obj/printerror.o obj/itoa.o obj/atoi.o obj/findNumProducts.o obj/HPF_console.o obj/EDF_console.o obj/HPF_file.o obj/EDF_file.o obj/storeProducts.o obj/readstr.o obj/swapProducts.o
 
 all: $(EXE)
 
@@ -30,11 +30,17 @@ obj/findNumProducts.o: src/findNumProducts.s
 obj/storeProducts.o: src/storeProducts.s
 	as $(AS_FLAGS) $(DEBUG) src/storeProducts.s -o obj/storeProducts.o
 
-obj/HPFalgorithm.o: src/HPFalgorithm.s
-	as $(AS_FLAGS) $(DEBUG) src/HPFalgorithm.s -o obj/HPFalgorithm.o
+obj/HPF_console.o: src/HPF_console.s
+	as $(AS_FLAGS) $(DEBUG) src/HPF_console.s -o obj/HPF_console.o
 
-obj/EDFalgorithm.o: src/EDFalgorithm.s
-	as $(AS_FLAGS) $(DEBUG) src/EDFalgorithm.s -o obj/EDFalgorithm.o
+obj/EDF_console.o: src/EDF_console.s
+	as $(AS_FLAGS) $(DEBUG) src/EDF_console.s -o obj/EDF_console.o
+
+obj/HPF_file.o: src/HPF_file.s
+	as $(AS_FLAGS) $(DEBUG) src/HPF_file.s -o obj/HPF_file.o
+
+obj/EDF_file.o: src/EDF_file.s
+	as $(AS_FLAGS) $(DEBUG) src/EDF_file.s -o obj/EDF_file.o
 
 obj/readstr.o: src/readstr.s
 	as $(AS_FLAGS) $(DEBUG) src/readstr.s -o obj/readstr.o

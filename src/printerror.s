@@ -17,9 +17,14 @@ find_string_len:
 
     inc %edx             # Incrementa il contatore
     inc %eax             # Passa al carattere successivo
-    jmp find_string_len       # Ripete il ciclo
+    jmp find_string_len  # Ripete il ciclo
 
 printerror:
+    push %eax
+    push %ebx
+    push %ecx
+    push %edx
+
     xor %edx, %edx
     mov %eax, %ecx # Buffer di output
     call find_string_len
@@ -28,18 +33,16 @@ print:
 
     # Stampa il contenuto della riga
     mov $4, %eax        # syscall write
-    mov %ecx, %ecx
-    mov $2, %ebx        # 
+    mov $2, %ebx        # error standard
     int $0x80           # Interruzione del kernel
+
+    pop %edx
+    pop %ecx
+    pop %ebx
+    pop %eax
 
 _ret:
     ret # fine della funzione printerror
         # l'esecuzione riprende dall'istruzione sucessiva
         # alla call che ha invocato printerror
-
-
-
-
-
-
         

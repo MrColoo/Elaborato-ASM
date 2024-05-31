@@ -3,63 +3,65 @@
 # ###################
 
 .section .data
-    num_products: .int 0       # Numero di prodotti letti dal file
+    num_products: .int 0        # Numero di prodotti letti dal file
 
-    filename:    
-        .ascii "Ordini.txt\0" # Nome del file di testo da leggere
-    fd:
-        .int 0               # File descriptor
+    filename: .int 0            # Puntatore al nome del file di testo da leggere
+
+    fd: .int 0                  # File descriptor
 
     buffer: .space 256          # Buffer per la lettura del file
     buffer_width: .int 256      # Dimensione del buffer
 
-    newline: .byte 10        # Valore del simbolo di nuova linea
+    newline: .byte 10           # Valore del simbolo di nuova linea
 
-    bytes_read: .int 0            # Numero di byte letti
+    bytes_read: .int 0          # Numero di byte letti
     buffer_index: .int 0        # Indice per scorrere il buffer
 
-    read_error:
-        .ascii "Errore nella apertura del file\n"
+    read_error_msg:
+        .ascii "Errore nell'apertura del file\nVerifica che esista e che si abbiano i permessi adeguati alla lettura\n\0"
 
 .section .text
 
-.global findNumProducts    # rende visibile il simbolo findNum al linker
+.global findNumProducts         # rende visibile il simbolo findNum al linker
 
-.type findNumProducts, @function   # dichiarazione della funzione itoa
-                        # la funzione converte un intero in una stringa
-                        # il numero da convertire deve esse
+.type findNumProducts, @function    # dichiarazione della funzione findNumProducts
+                                    # la funzione conta quanti prodotti sono presenti nel file
+                                    # e restituisce il numero INT in EAX
 
 findNumProducts:
     push %ebx
     push %ecx
     push %edx
+    mov %ebx, filename
+
+    mov $0, num_products
     
 # Apre il file
 _file_open:
-    mov $5, %eax        # syscall open
-    mov $filename, %ebx # Nome del file
-    mov $0, %ecx        # Modalità di apertura (O_RDONLY)
-    int $0x80           # Interruzione del kernel
+    mov $5, %eax            # syscall open
+    mov filename, %ebx     # Nome del file
+    mov $0, %ecx            # Modalità di apertura (O_RDONLY)
+    int $0x80               # Interruzione del kernel
 
     # Se c'è un errore, esce
     cmp $0, %eax
-    jle _ret
+    jle read_error
 
-    mov %eax, fd      # Salva il file descriptor da %eax a fd
+    mov %eax, fd            # Salva il file descriptor da %eax a fd
 
 # Legge il file riga per riga
 _find_num_products:
-    mov $3, %eax        # syscall read
-    mov fd, %ebx        # File descriptor
-    mov $buffer, %ecx   # Buffer di input
-    mov buffer_width, %edx      # Lunghezza massima
-    int $0x80           # Interruzione del kernel
+    mov $3, %eax            # syscall read
+    mov fd, %ebx            # File descriptor
+    mov $buffer, %ecx       # Buffer di input
+    mov buffer_width, %edx  # Lunghezza massima
+    int $0x80               # Interruzione del kernel
 
     # Salva il numero di byte letti
     mov %eax, bytes_read
 
-    cmp $0, %eax        # Controllo se ci sono errori o EOF
-    jle _file_close     # Se ci sono errori o EOF, chiudo il file
+    cmp $0, %eax            # Controllo se ci sono errori o EOF
+    jle _file_close         # Se ci sono errori o EOF, chiudo il file
 
     # Resetta l'indice del buffer
     movl $0, buffer_index
@@ -79,22 +81,22 @@ _process_buffer:
 
     # Ad esempio, controlla se è una nuova linea o un delimitatore
     cmp %al, newline
-    je _newline_found     # Gestisci la nuova linea
+    je _newline_found       # Gestisci la nuova linea
 
     # Torna a processare il prossimo byte nel buffer
     jmp _process_buffer
 
 _newline_found:
-    incw num_products          # incremento il numero di prodotti
+    incw num_products       # incremento il numero di prodotti
 
     # Torna a processare il prossimo byte nel buffer
     jmp _process_buffer
 
 # Chiude il file
 _file_close:
-    mov $6, %eax        # syscall close
-    mov %ebx, %ecx      # File descriptor
-    int $0x80           # Interruzione del kernel
+    mov $6, %eax            # syscall close
+    mov %ebx, %ecx          # File descriptor
+    int $0x80               # Interruzione del kernel
     
     mov num_products, %eax
 
@@ -106,3 +108,12 @@ _file_close:
 
 _ret:
     ret
+
+read_error:
+    leal read_error_msg, %eax
+    call printerror
+
+_exit:
+    mov $1, %eax        # syscall exit
+    xor %ebx, %ebx      # Codice di uscita 0
+    int $0x80           # Interruzione del kernel
