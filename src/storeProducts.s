@@ -38,6 +38,13 @@
                         # la funzione legge un file e crea un array di prodotti
 
 storeProducts:
+
+    push %ebx
+    push %ecx
+    push %edx
+    push %esi
+    push %edi
+
     mov %eax, num_products        # Legge parametro funzione caricato prima in eax e lo salva nella variabile num_products
     imul $4, %eax                 # 4 byte per prodotto
     mov %eax, malloc_size         # calcola spazio necessario nello heap nella variabile malloc_size
@@ -141,8 +148,8 @@ error:
 
     leal error_msg, %eax     # carico l'indirizzo di $error_msg
     call printf
-
-    ret
+    
+    jmp _ret
 
 # Chiude il file
 _file_close:
@@ -150,6 +157,14 @@ _file_close:
     mov fd, %ecx      # File descriptor
     int $0x80           # Interruzione del kernel
 
-_ret:
     mov products_pointer, %eax
+
+_ret:
+    
+    pop %edi
+    pop %esi
+    pop %edx
+    pop %ecx
+    pop %ebx
+
     ret

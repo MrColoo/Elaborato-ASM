@@ -2,10 +2,9 @@
 #
 # Read a string from keyboard and outputs the same string to video
 
-.section .data
-
 .section .bss
-	str: .string ""
+	buffer_read: 
+		.string ""
 
 .section .text
 .global readstr # rende visibile il simbolo readstr al linker
@@ -18,16 +17,16 @@ readstr:
     push %ecx
     push %edx
 
-	movl $3, %eax         # Set system call READ
-	movl $0, %ebx         # | <- keyboard
-	leal str, %ecx        # | <- destination
-	movl $1, %edx        # | <- string length
-	int $0x80             # Execute syscall
+	movl $3, %eax        	# Set system call READ
+	xor %ebx, %ebx         	# | <- keyboard
+	leal buffer_read, %ecx  # | <- destination
+	movl $50, %edx        	# | <- string length
+	int $0x80             	# Execute syscall
 
-	leal str, %eax
-
+	leal buffer_read, %eax 		# Restituisce l'indirizzo del buffer in eax
+	
 	pop %edx
     pop %ecx
     pop %ebx
-		
+
 	ret

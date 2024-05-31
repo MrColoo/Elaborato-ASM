@@ -6,18 +6,20 @@
     num_products: .int 0       # Numero di prodotti letti dal file
 
     filename:    
-        .asciz "Ordini.txt" # Nome del file di testo da leggere
+        .ascii "Ordini.txt\0" # Nome del file di testo da leggere
     fd:
         .int 0               # File descriptor
 
     buffer: .space 256          # Buffer per la lettura del file
     buffer_width: .int 256      # Dimensione del buffer
+
     newline: .byte 10        # Valore del simbolo di nuova linea
+
     bytes_read: .int 0            # Numero di byte letti
     buffer_index: .int 0        # Indice per scorrere il buffer
 
     read_error:
-        .asciz "Errore nella apertura del file\n"
+        .ascii "Errore nella apertura del file\n"
 
 .section .text
 
@@ -26,7 +28,6 @@
 .type findNumProducts, @function   # dichiarazione della funzione itoa
                         # la funzione converte un intero in una stringa
                         # il numero da convertire deve esse
-
 
 findNumProducts:
     push %ebx
