@@ -1,6 +1,7 @@
 # ###################
 # filename: EDF_file.s
 # ###################
+# Algoritmo EDF che stampa nel terminale e su file
 
 .section .data
 

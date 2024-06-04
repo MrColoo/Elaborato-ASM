@@ -1,6 +1,7 @@
 # ###################
 # filename: HPF_console.s
 # ###################
+# Algoritmo HPF che stampa unicamente nel terminale
 
 .section .data
 
@@ -23,9 +24,9 @@
 
 .section .text
 
-.global HPF_console            # rende visibile il simbolo edf al linker
+.global HPF_console            # rende visibile il simbolo HPF al linker
 
-.type HPF_console, @function   # dichiarazione della funzione edf
+.type HPF_console, @function   # dichiarazione della funzione HPF
                                 # la funzione scambia due prodotti nell'array
 
 HPF_console:

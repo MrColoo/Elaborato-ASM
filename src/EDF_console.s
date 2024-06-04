@@ -1,6 +1,7 @@
 # ###################
 # filename: EDF_console.s
 # ###################
+# Algoritmo EDF che stampa unicamente nel terminale
 
 .section .data
 
@@ -25,7 +26,7 @@
 
 .global EDF_console            # rende visibile il simbolo edf al linker
 
-.type EDF_console, @function   # dichiarazione della funzione edf
+.type EDF_console, @function    # dichiarazione della funzione edf
                                 # la funzione scambia due prodotti nell'array
 
 EDF_console:
@@ -54,7 +55,7 @@ if1:
     xor %ecx, %ecx              # reset ECX che usero come registro temporaneo per i confronti
     mov 6(%eax), %cl            # copia in CL la scadenza dell'elemento j+1
     cmp %cl, 2(%eax)            # compara scadenza elemento j con scadenza elemento j+1
-    jle if2                     # se è maggiore o uguale passa alla seconda condizione
+    jle if2                     # se è minore o uguale passa alla seconda condizione
 
     call swapProducts           # altrimenti chiama la funzione che scambia i due prodotti nell'array
     jmp back_internal_loop      # torna al ciclo for interno
@@ -71,11 +72,11 @@ if2:
 
 back_internal_loop:
     inc %esi                    # incrementa j
-    add $4, %eax              # scorri a elemento j
+    add $4, %eax                # scorri a elemento j successivo
     
     jmp internal_loop
 end_internal_loop:
-    pop %eax
+    pop %eax                    # restore dei registri
     pop %ebx
     inc %edi
     jmp external_loop

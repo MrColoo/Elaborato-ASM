@@ -1,18 +1,24 @@
+# ###################
+# filename: writefile.s
+# ###################
+
 .section .data
-    num_products: .int 0          # Numero di prodotti letti dal file
+    num_products: .int 0                    # Numero di prodotti letti dal file
     msg_conclusione: .asciz "Conclusione: "
     msg_penalty: .asciz "Penalty: "
-    filename: .asciz "Pianificazione.txt" # Nome del file di testo da leggere
-    fd: .int 0                    # File descriptor
-    buffer: .space 256            # Buffer per la lettura del file
-    buffer_width: .int 256        # Dimensione del buffer
-    newline: .byte 10             # Valore del simbolo di nuova linea
-    bytes_read: .int 0            # Numero di byte letti
-    buffer_index: .int 0          # Indice per scorrere il buffer
+    filename: .asciz "Pianificazione.txt"   # Nome del file di testo da leggere
+    fd: .int 0                              # File descriptor
+    buffer: .space 256                      # Buffer per la lettura del file
+    buffer_width: .int 256                  # Dimensione del buffer
+    newline: .byte 10                       # Valore del simbolo di nuova linea
+    bytes_read: .int 0                      # Numero di byte letti
+    buffer_index: .int 0                    # Indice per scorrere il buffer
     read_error: .asciz "Errore nell'apertura del file\n"
 
 .section .text
 .global writefile
+
+.type writefile, @function
 
 writefile:
     # Apri il file per scrittura (crea se non esiste)

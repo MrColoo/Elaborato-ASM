@@ -7,7 +7,7 @@
 .global swapProducts # rende visibile il simbolo swapProducts al linker
 
 .type swapProducts, @function   # dichiarazione della funzione swapProducts
-                        # la funzione scambia due prodotti nell'array
+                        # la funzione scambia due prodotti consecutivi nell'array
 
 swapProducts:
     push %eax

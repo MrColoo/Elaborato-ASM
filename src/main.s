@@ -23,25 +23,25 @@
     .global _start
 
 _start:
-    mov (%esp), %eax       # Carica il numero di argomenti in eax
-    cmp $2, %eax           # Controlla se il numero di argomenti è inferiore a 2
-    jl error_no_filename   # Se sì, salta a error_no_filename
-    jg read_output_filename # Se sì, salta a read_output_filename
+    mov (%esp), %eax                # Carica il numero di argomenti in eax
+    cmp $2, %eax                    # Controlla se il numero di argomenti è inferiore a 2
+    jl error_no_filename            # Se sì, salta a error_no_filename
+    jg read_output_filename         # Se sì, salta a read_output_filename
 
     # Se il numero di argomenti è esattamente 2, esegue solo read_input_filename
-    mov 8(%esp), %eax       # Carica il nome del file di input in eax
-    mov %eax, file_input   # Salva il nome del file di input in file_input
-    jmp continue_execution # Salta alla continuazione del programma
+    mov 8(%esp), %eax               # Carica il nome del file di input in eax
+    mov %eax, file_input            # Salva il nome del file di input in file_input
+    jmp continue_execution          # Salta alla continuazione del programma
 
 read_output_filename:
     # Se il numero di argomenti è maggiore di 3, esegue sia read_input_filename che read_output_filename
-    mov 8(%esp), %eax       # Carica il nome del file di input in eax
-    mov %eax, file_input   # Salva il nome del file di input in file_input
-    mov 12(%esp), %eax       # Carica il nome del file di output in eax
-    mov %eax, file_output  # Salva il nome del file di output in file_output
+    mov 8(%esp), %eax               # Carica il nome del file di input in eax
+    mov %eax, file_input            # Salva il nome del file di input in file_input
+    mov 12(%esp), %eax              # Carica il nome del file di output in eax
+    mov %eax, file_output           # Salva il nome del file di output in file_output
 
 continue_execution:
-    mov file_input, %ebx
+    mov file_input, %ebx            # Copia il nome del file di input in EBX
     call findNumProducts            # Chiama la funzione per trovare il numero di prodotti nel file
     mov %eax, num_products          # Salva il numero di prodotti presenti nel file nella variabile    
     call storeProducts              # Chiama la funzione per salvare i prodotti nell'array
@@ -76,33 +76,33 @@ _exit:
     int $0x80           # Interruzione del kernel
 
 EDFconsole:
-    cmp $0, file_output
-    jne EDFfile
+    cmp $0, file_output             # controlla se è stato passato come parametro il file di output
+    jne EDFfile                     # in caso affermativo invoca la funzione che stampa i risultati anche su file
     mov products_pointer, %eax      # copia in EAX il puntatore al primo elemento dell'array di prodotti
     mov num_products, %ebx          # copia in EBX il numero di prodotti presenti nel file
-    call EDF_console               # invoca la funzione che implementa l'algoritmo EDF
+    call EDF_console                # invoca la funzione che implementa l'algoritmo EDF
     jmp continue_execution
 
 EDFfile:
     mov products_pointer, %eax      # copia in EAX il puntatore al primo elemento dell'array di prodotti
     mov num_products, %ebx          # copia in EBX il numero di prodotti presenti nel file
     mov file_output, %ecx 
-    call EDF_file               # invoca la funzione che implementa l'algoritmo EDF
+    call EDF_file                   # invoca la funzione che implementa l'algoritmo EDF
     jmp continue_execution
 
 HPFconsole:
-    cmp $0, file_output
-    jne HPFfile
+    cmp $0, file_output             # controlla se è stato passato come parametro il file di output
+    jne HPFfile                     # in caso affermativo invoca la funzione che stampa i risultati anche su file
     mov products_pointer, %eax      # copia in EAX il puntatore al primo elemento dell'array di prodotti
     mov num_products, %ebx          # copia in EBX il numero di prodotti presenti nel file
-    call HPF_console               # invoca la funzione che implementa l'algoritmo HPF
+    call HPF_console                # invoca la funzione che implementa l'algoritmo HPF
     jmp continue_execution
 
 HPFfile:
     mov products_pointer, %eax      # copia in EAX il puntatore al primo elemento dell'array di prodotti
     mov num_products, %ebx          # copia in EBX il numero di prodotti presenti nel file
     mov file_output, %ecx 
-    call HPF_file               # invoca la funzione che implementa l'algoritmo EDF
+    call HPF_file                   # invoca la funzione che implementa l'algoritmo EDF
     jmp continue_execution
 
 error_no_filename:

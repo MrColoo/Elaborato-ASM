@@ -39,7 +39,7 @@ findNumProducts:
 # Apre il file
 _file_open:
     mov $5, %eax            # syscall open
-    mov filename, %ebx     # Nome del file
+    mov filename, %ebx      # Nome del file
     mov $0, %ecx            # Modalità di apertura (O_RDONLY)
     int $0x80               # Interruzione del kernel
 

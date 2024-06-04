@@ -1,6 +1,7 @@
 # ###################
 # filename: HPF_file.s
 # ###################
+# Algoritmo HPF che stampa nel terminale e su file
 
 .section .data
 
@@ -30,9 +31,9 @@
 
 .section .text
 
-.global HPF_file            # rende visibile il simbolo edf al linker
+.global HPF_file            # rende visibile il simbolo HPF al linker
 
-.type HPF_file, @function   # dichiarazione della funzione edf
+.type HPF_file, @function   # dichiarazione della funzione HPF
                                 # la funzione scambia due prodotti nell'array
 
 HPF_file:
