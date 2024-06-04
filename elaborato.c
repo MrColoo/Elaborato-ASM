@@ -28,7 +28,7 @@ int main(){
     processo processi[D];
     
 
-    ordiniF = fopen("Ordini.txt", "r");
+    ordiniF = fopen("Ordini/EDF.txt", "r");
     num = readFile(processi, ordiniF);
 
     do

@@ -49,11 +49,6 @@ external_loop:
 internal_loop:
     cmp %ebx, %esi              # compara j con num_products - i -1
     jge end_internal_loop       # se j > num_products - i - 1 salta alla fine del ciclo for
-    
-    push %esi
-    imul $4, %esi               # moltiplico esi per 4
-    add %esi, %eax              # scorri a elemento j
-    pop %esi
 
 if1:
     xor %ecx, %ecx              # reset ECX che usero come registro temporaneo per i confronti
@@ -68,14 +63,16 @@ if2:
     cmp %cl, 2(%eax)            # compara scadenza elemento j con scadenza elemento j+1
     jne back_internal_loop      # se non sono uguali, torna al ciclo for interno
 
-    mov 7(%eax), %cl            # copia in CL la scadenza dell'elemento j+1
-    cmp %cl, 3(%eax)            # compara scadenza elemento j con scadenza elemento j+1
-    jle back_internal_loop      # se scadenza j <= scadenza j+1 torna al ciclo for interno
+    mov 7(%eax), %cl            # copia in CL la priorita dell'elemento j+1
+    cmp %cl, 3(%eax)            # compara priorita elemento j con priorita elemento j+1
+    jle back_internal_loop      # se priorita j <= priorita j+1 torna al ciclo for interno
 
     call swapProducts           # altrimenti chiama la funzione che scambia i due prodotti nell'array
 
 back_internal_loop:
     inc %esi                    # incrementa j
+    add $4, %eax              # scorri a elemento j
+    
     jmp internal_loop
 end_internal_loop:
     pop %eax

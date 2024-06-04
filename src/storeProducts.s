@@ -100,7 +100,7 @@ _read_file:
     xor %ecx, %ecx
 
     # Resetta l'indicatore del campo attuale
-    mov $1, %ebx
+    xor %ebx, %ebx
 
 parse_buffer:
     # Controlla se abbiamo raggiunto la fine dei dati letti nel buffer
@@ -135,16 +135,16 @@ increment_index:
     jmp _ret            # Esce dal programma
 
 verifica:
-    cmp $1, %ebx
+    cmp $0, %ebx
     je verifica_ID
 
-    cmp $2, %ebx
+    cmp $1, %ebx
     je verifica_durata
 
-    cmp $3, %ebx
+    cmp $2, %ebx
     je verifica_scadenza
 
-    cmp $4, %ebx
+    cmp $3, %ebx
     je verifica_priorita
 
 next_field:
@@ -177,7 +177,7 @@ verifica_scadenza:
 verifica_priorita:
     cmpb $5, %cl
     jg error
-    mov $1, %ebx
+    xor %ebx, %ebx
     jmp next_field
 
 error:
