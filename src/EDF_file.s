@@ -75,7 +75,7 @@ if2:
 
     mov 7(%eax), %cl            # copia in CL la scadenza dell'elemento j+1
     cmp %cl, 3(%eax)            # compara scadenza elemento j con scadenza elemento j+1
-    jle back_internal_loop      # se scadenza j <= scadenza j+1 torna al ciclo for interno
+    jge back_internal_loop      # se scadenza j <= scadenza j+1 torna al ciclo for interno
 
     call swapProducts           # altrimenti chiama la funzione che scambia i due prodotti nell'array
 
