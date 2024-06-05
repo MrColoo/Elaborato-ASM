@@ -1,6 +1,6 @@
 EXE = bin/pianificatore
 AS_FLAGS = --32 
-DEBUG = -gstabs
+DEBUG =
 LD_FLAGS = -m elf_i386
 OBJ = obj/main.o obj/printf.o obj/printerror.o obj/itoa.o obj/atoi.o obj/findNumProducts.o obj/HPF_console.o obj/EDF_console.o obj/HPF_file.o obj/EDF_file.o obj/storeProducts.o obj/readstr.o obj/swapProducts.o
 

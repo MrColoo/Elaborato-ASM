@@ -34,7 +34,7 @@ findNumProducts:
     push %edx
     mov %ebx, filename
 
-    mov $0, num_products
+    movl $0, num_products
     
 # Apre il file
 _file_open:

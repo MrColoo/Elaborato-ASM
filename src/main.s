@@ -76,7 +76,7 @@ _exit:
     int $0x80           # Interruzione del kernel
 
 EDFconsole:
-    cmp $0, file_output             # controlla se è stato passato come parametro il file di output
+    cmpl $0, file_output             # controlla se è stato passato come parametro il file di output
     jne EDFfile                     # in caso affermativo invoca la funzione che stampa i risultati anche su file
     mov products_pointer, %eax      # copia in EAX il puntatore al primo elemento dell'array di prodotti
     mov num_products, %ebx          # copia in EBX il numero di prodotti presenti nel file
@@ -91,7 +91,7 @@ EDFfile:
     jmp continue_execution
 
 HPFconsole:
-    cmp $0, file_output             # controlla se è stato passato come parametro il file di output
+    cmpl $0, file_output             # controlla se è stato passato come parametro il file di output
     jne HPFfile                     # in caso affermativo invoca la funzione che stampa i risultati anche su file
     mov products_pointer, %eax      # copia in EAX il puntatore al primo elemento dell'array di prodotti
     mov num_products, %ebx          # copia in EBX il numero di prodotti presenti nel file
